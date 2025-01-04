@@ -1,43 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import JobDetails from '../components/jobs/JobDetails';
+import { jobService } from '../services/jobService';
 
 const JobDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // TODO: Remplacer par un appel API réel
-    setJob({
-      id: id,
-      title: 'Bioinformaticien Senior',
-      company: 'BioTech Labs',
-      location: 'Paris, France',
-      type: 'CDI',
-      skills: ['Python', 'R', 'NGS', 'Linux', 'SQL'],
-      salary: '45-55k€',
-      relevanceScore: 0.92,
-      description: 'Nous recherchons un bioinformaticien expérimenté pour rejoindre notre équipe...',
-      responsibilities: [
-        'Développer des pipelines d\'analyse NGS',
-        'Participer aux projets de recherche',
-        'Collaborer avec les équipes de biologistes'
-      ],
-      experience: '3-5 ans',
-      education: 'Master ou PhD en Bioinformatique',
-      postedAt: '2024-01-01'
-    });
-    setLoading(false);
+    const fetchJob = async () => {
+      try {
+        setLoading(true);
+        const data = await jobService.getJobById(id);
+        setJob(data);
+      } catch (error) {
+        setError('Impossible de charger les détails de l\'offre');
+        console.error('Error fetching job:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJob();
   }, [id]);
 
   if (loading) {
-    return <div>Chargement...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600 p-4">
+        {error}
+        <button 
+          onClick={() => navigate('/')}
+          className="mt-4 text-blue-600 hover:underline"
+        >
+          Retour à la liste des offres
+        </button>
+      </div>
+    );
   }
 
   return (
     <div>
-      <JobDetails job={job} />
+      <JobDetails job={job} onClose={() => navigate('/')} />
     </div>
   );
 };
