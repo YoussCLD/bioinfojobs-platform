@@ -1,9 +1,29 @@
 import React from 'react';
 import { MapPin, Building, Clock, Star, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const JobCard = ({ job }) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    navigate(`/jobs/${job.id}`);
+  };
+
+  const handleApply = (e) => {
+    e.stopPropagation(); // Empêche la navigation vers les détails
+    // Logique de candidature à implémenter
+  };
+
+  const handleFavorite = (e) => {
+    e.stopPropagation(); // Empêche la navigation vers les détails
+    // Logique de favori à implémenter
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <div 
+      className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
+      onClick={handleViewDetails}
+    >
       <div className="flex justify-between">
         {/* Informations principales */}
         <div className="flex-1">
@@ -23,7 +43,10 @@ const JobCard = ({ job }) => {
                 Score: {Math.round(job.relevanceScore * 100)}%
               </div>
               <div className="mt-2">
-                <button className="text-gray-400 hover:text-yellow-500">
+                <button 
+                  className="text-gray-400 hover:text-yellow-500"
+                  onClick={handleFavorite}
+                >
                   <Star className="h-5 w-5" />
                 </button>
               </div>
@@ -70,10 +93,16 @@ const JobCard = ({ job }) => {
           Publié {job.postedAt || 'récemment'}
         </div>
         <div className="space-x-3">
-          <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+          <button 
+            className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+            onClick={handleViewDetails}
+          >
             Voir plus de détails
           </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium">
+          <button 
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium"
+            onClick={handleApply}
+          >
             Postuler
           </button>
         </div>
