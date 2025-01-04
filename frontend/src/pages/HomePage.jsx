@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Filter, MapPin } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import JobCard from '../components/jobs/JobCard';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ErrorMessage from '../components/common/ErrorMessage';
 import { jobService } from '../services/jobService';
 
 const HomePage = () => {
@@ -8,38 +10,22 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        setLoading(true);
-        const data = await jobService.getJobs();
-        setJobs(data);
-      } catch (error) {
-        setError('Impossible de charger les offres d\'emploi');
-        console.error('Error fetching jobs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await jobService.getJobs();
+      setJobs(data);
+    } catch (error) {
+      setError('Impossible de charger les offres d\'emploi. Veuillez réessayer.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchJobs();
   }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center text-red-600 p-4">
-        {error}
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -51,11 +37,36 @@ const HomePage = () => {
         </button>
       </div>
 
-      <div className="space-y-4">
-        {jobs.map(job => (
-          <JobCard key={job.id} job={job} />
-        ))}
-      </div>
+      {loading && (
+        <LoadingSpinner 
+          message="Chargement des offres d'emploi..." 
+          size="large"
+        />
+      )}
+
+      {error && (
+        <ErrorMessage 
+          message={error}
+          onRetry={fetchJobs}
+          variant="full"
+        />
+      )}
+
+      {!loading && !error && (
+        <>
+          {jobs.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Aucune offre d'emploi trouvée</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {jobs.map(job => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
