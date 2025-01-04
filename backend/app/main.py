@@ -1,6 +1,12 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+from .routes import api_router
+from .database import Base, engine
+from .config import settings
+
+# Création des tables dans la base de données
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="BioInfoJobs API",
@@ -17,13 +23,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Inclusion des routes
+app.include_router(api_router)
+
 @app.get("/")
 async def root():
     """Point d'entrée principal de l'API"""
     return {
         "message": "Bienvenue sur l'API BioInfoJobs",
-        "version": "1.0.0",
-        "status": "online"
+        "version": settings.VERSION,
+        "status": "online",
+        "docs_url": "/docs"
     }
 
 @app.get("/health")
@@ -32,7 +42,8 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow(),
-        "uptime": "operational"
+        "uptime": "operational",
+        "database": "connected"
     }
 
 if __name__ == "__main__":
