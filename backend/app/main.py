@@ -1,9 +1,1 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
-
-app = FastAPI(
-    title="BioInfoJobs API",
-    description="API pour la plateforme de recherche d'emploi en bioinformatique",
-    version="1.0.0"
-)
+IyBJbXBvcnRzCmZyb20gZmFzdGFwaSBpbXBvcnQgRmFzdEFQSQpmcm9tIGZhc3RhcGkubWlkZGxld2FyZS5jb3JzIGltcG9ydCBDT1JTTWlkZGxld2FyZQpmcm9tIGRhdGV0aW1lIGltcG9ydCBkYXRldGltZQoKIyBDcmVhdGUgRmFzdEFQSSBpbnN0YW5jZQphcHAgPSBGYXN0QVBJKAogICAgdGl0bGU9IkJpb0luZm9Kb2JzIEFQSSIsCiAgICBkZXNjcmlwdGlvbj0iQVBJIHBvdXIgbGEgcGxhdGVmb3JtZSBkZSByZWNoZXJjaGUgZCdlbXBsb2kgZW4gYmlvaW5mb3JtYXRpcXVlIiwKICAgIHZlcnNpb249IjEuMC4wIgop
